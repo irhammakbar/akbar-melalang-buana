@@ -1,0 +1,49 @@
+#define NUM_LEDS 5
+
+// Array of LED pins
+int ledPins[NUM_LEDS] = {13, 12, 11, 10, 9};
+
+char inputChar = '\0';  // To store a single character input
+
+void setup() {
+  Serial.begin(115200);
+
+  // Set all LED pins as OUTPUT
+  for (int i = 0; i < NUM_LEDS; i++) {
+    pinMode(ledPins[i], OUTPUT);
+  }
+
+  Serial.println("Setup complete, awaiting input...");
+}
+
+void loop() {
+  // Check if serial data is available and read one character
+  if (Serial.available() > 0) {
+    inputChar = Serial.read();  // Read one character
+    Serial.print("Received: ");
+    Serial.println(inputChar);  // Debug: print the received input
+
+    int numLedsToTurnOn = inputChar - '0';  // Convert char '1'-'5' to int 1-5
+
+    if (numLedsToTurnOn >= 0 && numLedsToTurnOn <= NUM_LEDS) {
+      turnOffAll();  // Turn off all LEDs
+
+      // Turn on the corresponding number of LEDs
+      for (int i = 0; i < numLedsToTurnOn; i++) {
+        digitalWrite(ledPins[i], HIGH);
+        Serial.print("Turning on LED pin: ");
+        Serial.println(ledPins[i]);  // Debug: print which LED pin is being turned on
+      }
+    }
+
+    if (numLedsToTurnOn == 0) {
+      Serial.println("Turn Off All");
+    }
+  }
+}
+
+void turnOffAll() {
+  for (int i = 0; i < NUM_LEDS; i++) {
+    digitalWrite(ledPins[i], LOW);
+  }
+}
